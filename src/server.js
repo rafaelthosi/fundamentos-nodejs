@@ -1,39 +1,15 @@
 import http from 'node:http'
-
-// - HTTP
-//  - Método HTTP
-//  - URL
-
-// GET, POST, PUT, PATCH, DELETE
-
-// GET => Buscar um recurso do back-end
-// POST => Criar um recurso no back-end
-// PUT => Atualizar um recurso no back-end
-// PATCH => Atualizar uma informação específica de um recurso no back-end
-// DELETE => Deletar um recurso do back-end
-
-// Stateful - Stateless
+import { json } from './middlewares/json.js'
 
 const users = []
 
 const server = http.createServer(async (req, res) => {
   const { method, url } = req
 
-  const buffers = []
-
-  for await (const chunk of req) {
-    buffers.push(chunk)
-  }
-
-  try {
-    req.body = JSON.parse(Buffer.concat(buffers).toString())
-  } catch (error) {
-    req.body = null
-  }
+  await json(req, res)
   
   if (method === 'GET' && url === '/users') {
     return res
-      .setHeader('Content-type', 'application/json')
       .end(JSON.stringify(users))
   }
 
